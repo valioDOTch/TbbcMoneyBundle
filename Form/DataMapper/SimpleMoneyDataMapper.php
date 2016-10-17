@@ -27,7 +27,7 @@ final class SimpleMoneyDataMapper implements DataMapperInterface
      * @param int      $decimals
      * @param Currency $fixedCurrency
      */
-    public function __construct($decimals = 2, Currency $fixedCurrency)
+    public function __construct($decimals, Currency $fixedCurrency)
     {
         $this->transformer = new MoneyToArrayTransformer($decimals);
         $this->fixedCurrency = $fixedCurrency;

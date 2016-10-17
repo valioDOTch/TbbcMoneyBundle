@@ -37,11 +37,14 @@ class SimpleMoneyType extends AbstractType
      */
     public function buildForm(FormBuilderInterface $builder, array $options)
     {
+        //Use currency provided or default currency
+        $currency = $options['currency'] ? $options['currency'] : new Currency($this->pairManager->getReferenceCurrencyCode());
+
         $builder
             ->add('tbbc_amount', 'Symfony\Component\Form\Extension\Core\Type\TextType')
             ->setDataMapper(new SimpleMoneyDataMapper(
                 $this->decimals,
-                new Currency($this->pairManager->getReferenceCurrencyCode())
+                $currency
             ));
     }
 
@@ -54,7 +57,9 @@ class SimpleMoneyType extends AbstractType
             ->setDefaults(array(
                 'data_class' => 'Money\Money',
                 'empty_data' => null,
+                'currency' => null,
             ))
+            ->setAllowedTypes('currency', array('Money\Currency', 'null'))
         ;
     }
 

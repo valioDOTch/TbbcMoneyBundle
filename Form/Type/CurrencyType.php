@@ -2,10 +2,10 @@
 
 namespace Tbbc\MoneyBundle\Form\Type;
 
-use Tbbc\MoneyBundle\Form\DataTransformer\CurrencyToArrayTransformer;
 use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
+use Tbbc\MoneyBundle\Form\DataMapper\CurrencyDataMapper;
 
 /**
  * Form type for the Currency object.
@@ -42,7 +42,8 @@ class CurrencyType extends AbstractType
             "choices" => $choiceList,
             "preferred_choices" => array($options["reference_currency"]),
         ));
-        $builder->addModelTransformer(new CurrencyToArrayTransformer());
+
+        $builder->setDataMapper(new CurrencyDataMapper());
     }
 
     /**
@@ -52,8 +53,10 @@ class CurrencyType extends AbstractType
     {
         $resolver->setRequired(array('reference_currency', 'currency_choices'));
         $resolver->setDefaults(array(
+            'data_class' => 'Money\Currency',
             'reference_currency' => $this->referenceCurrencyCode,
             'currency_choices' => $this->currencyCodeList,
+            'empty_data' => null,
         ));
         $resolver->setAllowedTypes('reference_currency', 'string');
         $resolver->setAllowedTypes('currency_choices', 'array');

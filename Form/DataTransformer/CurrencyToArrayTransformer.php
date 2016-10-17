@@ -10,6 +10,7 @@ use Symfony\Component\Form\Exception\TransformationFailedException;
 
 /**
  * Transforms between a Currency and a string
+ * @deprecated User CurrencyDataMapper instead
  */
 class CurrencyToArrayTransformer implements DataTransformerInterface
 {

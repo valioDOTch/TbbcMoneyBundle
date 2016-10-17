@@ -9,6 +9,7 @@ use Symfony\Component\Form\Extension\Core\DataTransformer\MoneyToLocalizedString
 
 /**
  * Transforms between a Money instance and an array.
+ * @deprecated User MoneyDataMapper instead
  */
 class MoneyToArrayTransformer implements DataTransformerInterface
 {

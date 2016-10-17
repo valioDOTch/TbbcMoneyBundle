@@ -7,6 +7,7 @@ use Tbbc\MoneyBundle\Pair\PairManagerInterface;
 
 /**
  * Transforms between a Money instance and an array.
+ * @deprecated Use SimpleMoneyDataMapper instead
  */
 class SimpleMoneyToArrayTransformer extends MoneyToArrayTransformer
 {

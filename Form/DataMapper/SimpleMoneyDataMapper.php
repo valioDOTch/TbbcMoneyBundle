@@ -1,14 +1,15 @@
 <?php
 namespace Tbbc\MoneyBundle\Form\DataMapper;
 
+use Money\Currency;
 use Symfony\Component\Form\DataMapperInterface;
 use Tbbc\MoneyBundle\Form\DataTransformer\MoneyToArrayTransformer;
 
 /**
- * Class MoneyDataMapper
+ * Class SimpleMoneyDataMapper
  * @package Tbbc\MoneyBundle\Form\DataMapper
  */
-final class MoneyDataMapper implements DataMapperInterface
+final class SimpleMoneyDataMapper implements DataMapperInterface
 {
     /**
      * @var MoneyToArrayTransformer
@@ -16,13 +17,20 @@ final class MoneyDataMapper implements DataMapperInterface
     protected $transformer;
 
     /**
+     * @var Currency
+     */
+    protected $fixedCurrency;
+
+    /**
      * MoneyToArrayTransformer constructor.
      *
-     * @param int $decimals
+     * @param int      $decimals
+     * @param Currency $fixedCurrency
      */
-    public function __construct($decimals = 2)
+    public function __construct($decimals = 2, Currency $fixedCurrency)
     {
         $this->transformer = new MoneyToArrayTransformer($decimals);
+        $this->fixedCurrency = $fixedCurrency;
     }
 
     /**
@@ -34,7 +42,6 @@ final class MoneyDataMapper implements DataMapperInterface
 
         $forms = iterator_to_array($forms);
         $forms['tbbc_amount']->setData($data ? $data['tbbc_amount'] : null);
-        $forms['tbbc_currency']->setData($data ? $data['tbbc_currency'] : null);
     }
 
     /**
@@ -46,7 +53,7 @@ final class MoneyDataMapper implements DataMapperInterface
 
         $input = array(
             'tbbc_amount'   => $forms['tbbc_amount']->getData(),
-            'tbbc_currency' => $forms['tbbc_currency']->getData(),
+            'tbbc_currency' => $this->fixedCurrency,
         );
         $data = $this->transformer->reverseTransform($input);
     }

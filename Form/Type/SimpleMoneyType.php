@@ -2,14 +2,17 @@
 
 namespace Tbbc\MoneyBundle\Form\Type;
 
+use Money\Currency;
+use Symfony\Component\Form\AbstractType;
 use Symfony\Component\Form\FormBuilderInterface;
-use Tbbc\MoneyBundle\Form\DataTransformer\SimpleMoneyToArrayTransformer;
+use Symfony\Component\OptionsResolver\OptionsResolver;
+use Tbbc\MoneyBundle\Form\DataMapper\SimpleMoneyDataMapper;
 use Tbbc\MoneyBundle\Pair\PairManagerInterface;
 
 /**
  * Form type for the Money object.
  */
-class SimpleMoneyType extends MoneyType
+class SimpleMoneyType extends AbstractType
 {
     /** @var  PairManagerInterface */
     protected $pairManager;
@@ -36,9 +39,23 @@ class SimpleMoneyType extends MoneyType
     {
         $builder
             ->add('tbbc_amount', 'Symfony\Component\Form\Extension\Core\Type\TextType')
-            ->addModelTransformer(
-                new SimpleMoneyToArrayTransformer($this->pairManager, $this->decimals)
-            );
+            ->setDataMapper(new SimpleMoneyDataMapper(
+                $this->decimals,
+                new Currency($this->pairManager->getReferenceCurrencyCode())
+            ));
+    }
+
+    /**
+     * @param OptionsResolver $resolver
+     */
+    public function configureOptions(OptionsResolver $resolver)
+    {
+        $resolver
+            ->setDefaults(array(
+                'data_class' => 'Money\Money',
+                'empty_data' => null,
+            ))
+        ;
     }
 
     /**

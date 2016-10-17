@@ -8,7 +8,7 @@ use Tbbc\MoneyBundle\Form\DataTransformer\CurrencyToArrayTransformer;
  * Class CurrencyDataMapper
  * @package Tbbc\MoneyBundle\Form\DataMapper
  */
-class CurrencyDataMapper implements DataMapperInterface
+final class CurrencyDataMapper implements DataMapperInterface
 {
     /**
      * @var CurrencyToArrayTransformer

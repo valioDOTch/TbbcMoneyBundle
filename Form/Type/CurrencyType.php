@@ -2,8 +2,11 @@
 
 namespace Tbbc\MoneyBundle\Form\Type;
 
+use Money\Currency;
 use Symfony\Component\Form\AbstractType;
+use Symfony\Component\Form\Exception\UnexpectedTypeException;
 use Symfony\Component\Form\FormBuilderInterface;
+use Symfony\Component\Form\FormInterface;
 use Symfony\Component\OptionsResolver\OptionsResolver;
 use Tbbc\MoneyBundle\Form\DataMapper\CurrencyDataMapper;
 
@@ -38,9 +41,29 @@ class CurrencyType extends AbstractType
         foreach ($options["currency_choices"] as $currencyCode) {
             $choiceList[$currencyCode] = $currencyCode;
         }
+
         $builder->add('tbbc_name', 'Symfony\Component\Form\Extension\Core\Type\ChoiceType', array(
             "choices" => $choiceList,
             "preferred_choices" => array($options["reference_currency"]),
+            "placeholder" => $options['placeholder'],
+            'empty_data' => function (FormInterface $form) use ($options) {
+                //Use "empty_data" option from parent and convert it for child
+                if (is_callable($options['empty_data'])) {
+                    $currency = call_user_func($options['empty_data'], $form);
+                } else {
+                    $currency =  $options['empty_data'];
+                }
+
+                if ($currency === null) {
+                    return null;
+                }
+
+                if (!$currency instanceof Currency) {
+                    throw new UnexpectedTypeException($currency, 'Currency');
+                }
+
+                return $currency->getName();
+            },
         ));
 
         $builder->setDataMapper(new CurrencyDataMapper());
@@ -57,6 +80,7 @@ class CurrencyType extends AbstractType
             'reference_currency' => $this->referenceCurrencyCode,
             'currency_choices' => $this->currencyCodeList,
             'empty_data' => null,
+            'placeholder' => null,
         ));
         $resolver->setAllowedTypes('reference_currency', 'string');
         $resolver->setAllowedTypes('currency_choices', 'array');
